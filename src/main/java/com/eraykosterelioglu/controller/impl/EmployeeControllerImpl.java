@@ -14,13 +14,15 @@ public class EmployeeControllerImpl implements IEmployeeController {
     @Autowired
     private IEmployeeService employeeService;
 
-    @PostMapping("")
-    public DtoEmployeeIU saveEmployee(@RequestBody DtoEmployeeIU dtoEmployeeIU) {
+    @PostMapping("/save")
+    @Override
+    public DtoEmployee saveEmployee(@RequestBody DtoEmployeeIU dtoEmployeeIU) {
         return employeeService.saveEmployee(dtoEmployeeIU);
     }
 
-    @GetMapping
-    public DtoEmployee findEmployeeById(@RequestParam("id") Long id) {
+    @GetMapping("/find/{id}")
+    @Override
+    public DtoEmployee findEmployeeById(@PathVariable("id") Long id) {
         return employeeService.findEmployeeById(id);
     }
 }

@@ -9,5 +9,5 @@ public class DtoEmployeeIU {
 
     private String name;
 
-    private DtoDepartmentIU dtoDepartmentIU;
+    private Long departmentId;
 }

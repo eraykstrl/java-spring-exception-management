@@ -5,7 +5,7 @@ import com.eraykosterelioglu.dto.DtoEmployeeIU;
 
 public interface IEmployeeController {
 
-    public DtoEmployeeIU saveEmployee(DtoEmployeeIU dtoEmployeeIU);
+    public DtoEmployee saveEmployee(DtoEmployeeIU dtoEmployeeIU);
 
     public DtoEmployee findEmployeeById(Long id);
 

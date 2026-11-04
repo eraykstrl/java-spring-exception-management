@@ -3,6 +3,9 @@ package com.eraykosterelioglu.service.impl;
 import com.eraykosterelioglu.dto.DtoDepartment;
 import com.eraykosterelioglu.dto.DtoEmployee;
 import com.eraykosterelioglu.dto.DtoEmployeeIU;
+import com.eraykosterelioglu.exception.BaseException;
+import com.eraykosterelioglu.exception.ErrorMessage;
+import com.eraykosterelioglu.exception.MessageType;
 import com.eraykosterelioglu.model.Department;
 import com.eraykosterelioglu.model.Employee;
 import com.eraykosterelioglu.repository.DepartmentRepository;
@@ -24,25 +27,29 @@ public class EmployeeServiceImpl implements IEmployeeService {
     private DepartmentRepository departmentRepository;
 
     @Override
-    public DtoEmployeeIU saveEmployee(DtoEmployeeIU dtoEmployeeIU) {
+    public DtoEmployee saveEmployee(DtoEmployeeIU dtoEmployeeIU) {
 
         Employee employee = new Employee();
-        BeanUtils.copyProperties(dtoEmployeeIU,employee);
+        employee.setName(dtoEmployeeIU.getName());
 
-        Department department = new Department();
-        BeanUtils.copyProperties(dtoEmployeeIU.getDtoDepartmentIU(),department);
-
-        Optional<Department> optional = departmentRepository.findById(department.getId());
+        Optional<Department> optional = departmentRepository.findById(dtoEmployeeIU.getDepartmentId());
 
         if(optional.isEmpty()) {
+            System.out.println("Boş geldi optional");
             return null;
         }
 
-        employee.setDepartment(optional.get());
-
+        Department department = optional.get();
+        employee.setDepartment(department);
         Employee dbEmployee = employeeRepository.save(employee);
-        BeanUtils.copyProperties(dbEmployee,dtoEmployeeIU);
-        return dtoEmployeeIU;
+
+        DtoDepartment dtoDepartment = new DtoDepartment();
+        BeanUtils.copyProperties(department,dtoDepartment);
+        DtoEmployee dtoEmployee = new DtoEmployee();
+        BeanUtils.copyProperties(dbEmployee,dtoEmployee);
+        dtoEmployee.setDtoDepartment(dtoDepartment);
+
+        return dtoEmployee;
     }
 
     @Override
@@ -51,7 +58,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
         Optional<Employee> optional = employeeRepository.findById(id);
 
         if(optional.isEmpty()) {
-            return null;
+            throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST,id.toString()));
         }
         Employee employee = optional.get();
         DtoDepartment dtoDepartment = new DtoDepartment();
